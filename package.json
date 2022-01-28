@@ -1,7 +1,7 @@
 {
-  "name": "mongo-crud",
+  "name": "crud-storage",
   "version": "1.0.0",
-  "description": "Mongo adapter for CRUD operations",
+  "description": "Set of storages implementing simple CRUD interface. Contains storage for both the client and the server.",
   "main": "index.ts",
   "directories": {
     "lib": "lib"
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lika85456/mongo-crud.git"
+    "url": "git+https://github.com/lika85456/crud-storage.git"
   },
   "keywords": [
     "MongoDB",
@@ -21,9 +21,9 @@
   "author": "lika85456",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lika85456/mongo-crud/issues"
+    "url": "https://github.com/lika85456/crud-storage/issues"
   },
-  "homepage": "https://github.com/lika85456/mongo-crud#readme",
+  "homepage": "https://github.com/lika85456/crud-storage#readme",
   "dependencies": {
     "idb-keyval": "^6.0.3",
     "mongodb": "^4.2.2",
