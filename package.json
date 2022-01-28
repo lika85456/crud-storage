@@ -1,0 +1,52 @@
+{
+  "name": "mongo-crud",
+  "version": "1.0.0",
+  "description": "Mongo adapter for CRUD operations",
+  "main": "index.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "jest ./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lika85456/mongo-crud.git"
+  },
+  "keywords": [
+    "MongoDB",
+    "Typescript",
+    "CRUD"
+  ],
+  "author": "lika85456",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lika85456/mongo-crud/issues"
+  },
+  "homepage": "https://github.com/lika85456/mongo-crud#readme",
+  "dependencies": {
+    "idb-keyval": "^6.0.3",
+    "mongodb": "^4.2.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/jest": "^27.4.0",
+    "babel-jest": "^27.4.5",
+    "fake-indexeddb": "^3.1.7",
+    "jest": "^27.4.5",
+    "jest-localstorage-mock": "^2.4.18",
+    "jsdom": "^19.0.0",
+    "mongodb-memory-server": "^8.1.0",
+    "typescript": "^4.5.4"
+  },
+  "jest": {
+    "resetMocks": false,
+    "setupFiles": [
+      "jest-localstorage-mock",
+      "fake-indexeddb/auto"
+    ]
+  }
+}
