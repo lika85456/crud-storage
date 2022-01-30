@@ -16,7 +16,14 @@ export default class MongoCRUD<T> implements CRUD<T> {
     }
 
     public async read(id: string): Promise<Identifiable<T> | undefined> {
-        let result = await this.collection.findOne({ _id: new ObjectId(id) });
+        let objectId;
+        try {
+            objectId = new ObjectId(id);
+        }
+        catch (e) {
+            return undefined;
+        }
+        let result = await this.collection.findOne({ _id: objectId });
         if (!result) {
             return undefined;
         }

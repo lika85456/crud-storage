@@ -130,8 +130,7 @@ export class ClientApiStorageCRUD<T> implements CRUD<T> {
             this.logger.error("Error while getting count: " + (await response.text()));
             throw new Error("Error while getting count.");
         }
-
-        return +response.text();
+        return +(await response.text());
     }
 
 }

@@ -5,7 +5,7 @@ import { get, set, update, del, getMany } from "idb-keyval";
 export default class IndexedCRUD<T> implements CRUD<T>{
 
     static KEYS_PREFIX = "indexed-keys";
-    protected keys: Promise<string[]>;
+    protected keys: Promise<string[]> = Promise.resolve([]);
 
     constructor(protected prefix: string) {
         this.keys = get(this.getKeysId()).then(e => !!e ? JSON.parse(e) : []);

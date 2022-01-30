@@ -1,7 +1,7 @@
 import CRUD, { Identifiable } from "./CRUD";
 import { v4 } from "uuid";
 
-export default class MemoryCRUD<T> implements CRUD<T>{
+export default class MemoryCRUD<T extends object> implements CRUD<T>{
 
     protected storage: { [id: string]: T } = {};
 

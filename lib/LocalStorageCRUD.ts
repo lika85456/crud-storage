@@ -4,7 +4,7 @@ import { v4 } from "uuid";
 export default class LocalStorageCRUD<T> implements CRUD<T>{
 
     static KEYS_PREFIX = "keys/";
-    protected keys: string[];
+    protected keys: string[] = [];
 
     constructor(protected prefix: string) {
         this.keys = JSON.parse(localStorage.getItem(this.getKeysId()) || "[]");

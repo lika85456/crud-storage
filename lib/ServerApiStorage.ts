@@ -71,7 +71,7 @@ export class ServerApiStorage<T> {
 
             case "read":
                 if (typeof body !== "string" && !body?.id)
-                    throw new Error("Read ID not specified");
+                    return undefined;
                 return await storage.read(typeof body === "string" ? body : body.id!);
 
             case "update":

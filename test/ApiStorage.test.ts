@@ -5,7 +5,7 @@ import CRUD from "../lib/CRUD";
 import express, { Request, Response } from "express";
 import MemoryCRUD from '../lib/MemoryCRUD';
 
-describe.only('ApiStorageCRUD', () => {
+describe('ApiStorageCRUD', () => {
 
     let CRUD: CRUD<{ x: string }>;
     let serverStorage: ServerApiStorage<{ x: string }>;
