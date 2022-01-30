@@ -4,7 +4,8 @@ There are implementations for persistent (both client and server) and non persis
 
 ## CRUD Interface
 
-```export default interface CRUD<T> {
+```javascript
+export default interface CRUD<T> {
     create(object: T): Promise<string>;
     read(id: string): Promise<Identifiable<T> | undefined>;
     update(id: string, object: T): Promise<void>;
@@ -51,7 +52,7 @@ Pure memory storage.
 ### IndexedCRUD
 IndexedDB Storage, can be only used on client and is persistent. Define storage name in the constructor.
 Use for big amount of data such as images, videos or files. For small data rather use LocalStorageCRUD.
-```
+```javascript
 const clientStorage = new IndexedCRUD<object>("custom-name");
 ```
 
@@ -113,3 +114,7 @@ const clientApiStorage = new ClientApiStorageCRUD<any>("http://localhost:3000/st
 // but preferably use cached storage
 const myStorage = new CacheStorageCRUD<any>(clientApiStorage, new MemoryCRUD(),false);
 ```
+
+---
+
+Feel free to do whatever you want with this code. I do not take any responsibility.
