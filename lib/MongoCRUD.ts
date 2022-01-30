@@ -11,6 +11,7 @@ export default class MongoCRUD<T> implements CRUD<T> {
     }
 
     public async create(object: T): Promise<string> {
+        // @ts-ignore
         return (await this.collection.insertOne(object as OptionalId<T>)).insertedId.toString();
     }
 
@@ -21,6 +22,7 @@ export default class MongoCRUD<T> implements CRUD<T> {
         }
         // @ts-ignore
         result.id = result._id.toString();
+        // @ts-ignore
         delete result._id;
 
         // @ts-ignore
@@ -42,6 +44,7 @@ export default class MongoCRUD<T> implements CRUD<T> {
     public async list(): Promise<string[]> {
         return (await (await this.collection
             .find({}, { projection: { _id: 1 } })
+            // @ts-ignore
             .map(t => t._id.toString()))
             .toArray());
     }
@@ -50,6 +53,7 @@ export default class MongoCRUD<T> implements CRUD<T> {
         const docs = await (await this.collection.find().toArray()).map(doc => {
             // @ts-ignore
             doc.id = doc._id.toString();
+            // @ts-ignore
             delete doc._id;
             return doc;
         });

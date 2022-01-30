@@ -1,5 +1,6 @@
 import CRUD, { Identifiable } from "./CRUD";
-
+// @ts-ignore
+import fetch from "node-fetch";
 
 export type CrudRequest = {
     actions: { id: string }[];
@@ -10,11 +11,11 @@ export class ClientApiStorageCRUD<T> implements CRUD<T> {
     /**
      * 
      * @param url Url of the storage API endpoint
-     * 
+     * @see ServerApiStorage for server side setup
      * @example
      * const storage = new ClientApiStorage<any>("https://example.com/api/clientStorage");
      */
-    constructor(protected url: string, protected logger: Console) {
+    constructor(protected url: string, protected logger: Console = console) {
 
     }
 
@@ -22,10 +23,8 @@ export class ClientApiStorageCRUD<T> implements CRUD<T> {
         const response = await fetch(
             this.url + "/create",
             {
+                headers: { 'Content-Type': 'application/json' },
                 method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(object)
             });
 
@@ -34,32 +33,34 @@ export class ClientApiStorageCRUD<T> implements CRUD<T> {
             throw new Error("Error while creating an object.");
         }
 
-        return response.text();
+        return response.json();
     }
 
-    async read(id: string): Promise<Identifiable<T>> {
+    async read(id: string): Promise<Identifiable<T> | undefined> {
         const response = await fetch(
             this.url + "/read",
             {
                 method: "POST",
-                body: id
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
             });
 
         if (response.status != 200) {
             this.logger.error("Error while reading object: " + (await response.text()));
             throw new Error("Error while reading object.");
         }
+        const text = await response.text();
+        if (text === "undefined" || text === "")
+            return undefined;
 
-        return response.json();
+        return JSON.parse(text);
     }
 
     async update(id: string, object: T): Promise<void> {
         const response = await fetch(
             this.url + "/update",
             {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 method: "POST",
                 body: JSON.stringify({
                     id,
@@ -77,8 +78,9 @@ export class ClientApiStorageCRUD<T> implements CRUD<T> {
         const response = await fetch(
             this.url + "/remove",
             {
+                headers: { 'Content-Type': 'application/json' },
                 method: "POST",
-                body: id
+                body: JSON.stringify({ id })
             });
 
         if (response.status != 200) {
@@ -99,7 +101,7 @@ export class ClientApiStorageCRUD<T> implements CRUD<T> {
             throw new Error("Error while listing object ids.");
         }
 
-        return response.json();
+        return response.json() as any;
     }
 
     async getAll(): Promise<Identifiable<T>[]> {
@@ -114,7 +116,7 @@ export class ClientApiStorageCRUD<T> implements CRUD<T> {
             throw new Error("Error while getting all objects.");
         }
 
-        return response.json();
+        return response.json() as any;
     }
 
     async count(): Promise<number> {

@@ -1,16 +1,51 @@
+import bodyParser from 'body-parser';
+import { ServerApiStorage } from './../lib/ServerApiStorage';
+import { ClientApiStorageCRUD } from './../lib/ClientApiStorageCRUD';
 import CRUD from "../lib/CRUD";
-import LocalStorageCRUD from "../lib/LocalStorageCRUD";
+import express, { Request, Response } from "express";
+import MemoryCRUD from '../lib/MemoryCRUD';
 
-
-describe('LocalStorageCRUD', () => {
+describe.only('ApiStorageCRUD', () => {
 
     let CRUD: CRUD<{ x: string }>;
+    let serverStorage: ServerApiStorage<{ x: string }>;
+    let app: any;
+    let server: any;
+    let memoryStorage: CRUD<{ x: string }>;
 
-    beforeEach(async () => {
-        localStorage.clear();
-        jest.clearAllMocks();
-        CRUD = new LocalStorageCRUD<{ x: string }>("test-collection");
-    });
+    beforeAll((done) => {
+        app = express();
+
+        app.use(bodyParser.json());
+
+        serverStorage = new ServerApiStorage({
+            documentsLimit: 10,
+            maximumDocumentSize: 100
+        });
+
+        memoryStorage = new MemoryCRUD();
+
+        app.post("/storage/:action", async (req: Request, res: Response) => {
+            const response = await serverStorage.request(req.params.action as any, req.body, memoryStorage);
+            res.json(response);
+        });
+
+
+        CRUD = new ClientApiStorageCRUD<{ x: string }>("http://localhost:3001/storage", console);
+
+        server = app.listen(3001, () => {
+            console.log("Server started!");
+            done();
+        });
+    })
+
+    beforeEach(() => {
+        memoryStorage = new MemoryCRUD();
+    })
+
+    afterAll(() => {
+        server.close();
+    })
 
     it('should set & get', async () => {
         const id = await CRUD.create({ x: "100" });

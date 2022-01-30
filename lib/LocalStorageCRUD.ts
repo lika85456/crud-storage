@@ -4,7 +4,6 @@ import { v4 } from "uuid";
 export default class LocalStorageCRUD<T> implements CRUD<T>{
 
     static KEYS_PREFIX = "keys/";
-    protected storage: { [id: string]: T };
     protected keys: string[];
 
     constructor(protected prefix: string) {
@@ -47,7 +46,7 @@ export default class LocalStorageCRUD<T> implements CRUD<T>{
 
     async getAll(): Promise<Identifiable<T>[]> {
         return this.keys.map(key => ({
-            ...JSON.parse(localStorage.getItem(this.prefix + key)),
+            ...JSON.parse(localStorage.getItem(this.prefix + key) || "null"),
             id: key
         }));
     }

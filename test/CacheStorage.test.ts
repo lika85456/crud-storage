@@ -1,15 +1,14 @@
+import { CacheStorageCRUD } from "../lib/CacheStorageCRUD";
 import CRUD from "../lib/CRUD";
-import LocalStorageCRUD from "../lib/LocalStorageCRUD";
+import MemoryCRUD from "../lib/MemoryCRUD";
 
 
-describe('LocalStorageCRUD', () => {
+describe('CacheStorageCRUD', () => {
 
     let CRUD: CRUD<{ x: string }>;
 
     beforeEach(async () => {
-        localStorage.clear();
-        jest.clearAllMocks();
-        CRUD = new LocalStorageCRUD<{ x: string }>("test-collection");
+        CRUD = new CacheStorageCRUD<{ x: string }>(new MemoryCRUD(), new MemoryCRUD(), false);
     });
 
     it('should set & get', async () => {

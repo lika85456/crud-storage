@@ -1,5 +1,4 @@
 import CRUD from "../lib/CRUD";
-import LocalStorageCRUD from "../lib/LocalStorageCRUD";
 import MemoryCRUD from "../lib/MemoryCRUD";
 
 
@@ -28,7 +27,7 @@ describe('LocalStorageCRUD', () => {
         const id = await CRUD.create({ x: "100" });
         let result = await CRUD.read(id);
         expect(result).toStrictEqual({ id, x: "100" });
-        await CRUD.remove(result.id);
+        await CRUD.remove(result!.id);
         result = await CRUD.read(id);
         expect(result).toBeUndefined();
     });
