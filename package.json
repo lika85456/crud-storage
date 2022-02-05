@@ -17,6 +17,10 @@
   "workspaces": [
     "packages/*"
   ],
+  "exports": {
+    ".": "./index.ts",
+    "./MongoStorage": "./packages/MongoStorage/MongoStorage.ts"
+  },
   "keywords": [
     "MongoDB",
     "Typescript",
