@@ -1,8 +1,8 @@
-import CRUD, { Identifiable } from "./CRUD";
+import Storage, { WithId } from "./Storage";
 import { v4 } from "uuid";
 import { get, set, update, del, getMany } from "idb-keyval";
 
-export default class IndexedCRUD<T> implements CRUD<T>{
+export default class IndexedStorage<T extends object> implements Storage<T>{
 
     static KEYS_PREFIX = "indexed-keys";
     protected keys: Promise<string[]> = Promise.resolve([]);
@@ -11,14 +11,25 @@ export default class IndexedCRUD<T> implements CRUD<T>{
         this.keys = get(this.getKeysId()).then(e => !!e ? JSON.parse(e) : []);
     }
 
-    async create(object: T): Promise<string> {
-        const id = v4();
-        await set(this.prefix + id, JSON.stringify(object));
-        await this.addKey(id);
+    public async set(id: string | undefined, object: T): Promise<string> {
+        let generated = false;
+        if (!id) {
+            id = v4();
+            generated = true;
+        }
+
+        const copy = { ...object } as any;
+        delete copy.id;
+        await update(this.prefix + id, () => JSON.stringify(copy));
+
+        if (generated) {
+            this.addKey(id);
+        }
+
         return id;
     }
 
-    async read(id: string): Promise<Identifiable<T> | undefined> {
+    public async get(id: string): Promise<WithId<T> | undefined> {
         const result = await get(this.prefix + id);
         if (!result) {
             return undefined;
@@ -30,10 +41,16 @@ export default class IndexedCRUD<T> implements CRUD<T>{
         };
     }
 
-    async update(id: string, object: T): Promise<void> {
-        const copy = { ...object } as any;
-        delete copy.id;
-        await update(this.prefix + id, () => JSON.stringify(copy));
+    public async where(query?: { key: string; value: string; }[]): Promise<WithId<T>[]> {
+        const keys = (await this.keys).map(x => this.prefix + x);
+        const all = (await getMany(keys)).map((x, i) => ({ ...JSON.parse(x), id: keys[i].substring(this.prefix.length) }));
+
+        if (!query) {
+            return all;
+        }
+
+        return all
+            .filter(x => query.every(queryEl => x[queryEl.key] === queryEl.value));
     }
 
     async remove(id: string): Promise<void> {
@@ -41,13 +58,8 @@ export default class IndexedCRUD<T> implements CRUD<T>{
         del(this.prefix + id);
     }
 
-    async list(): Promise<string[]> {
+    async getKeys(): Promise<string[]> {
         return this.keys;
-    }
-
-    async getAll(): Promise<Identifiable<T>[]> {
-        const keys = (await this.keys).map(x => this.prefix + x);
-        return (await getMany(keys)).map((x, i) => ({ ...JSON.parse(x), id: keys[i].substring(this.prefix.length) }));
     }
 
     async count(): Promise<number> {
@@ -67,6 +79,6 @@ export default class IndexedCRUD<T> implements CRUD<T>{
     }
 
     protected getKeysId(): string {
-        return IndexedCRUD.KEYS_PREFIX + this.prefix;
+        return IndexedStorage.KEYS_PREFIX + this.prefix;
     }
 }

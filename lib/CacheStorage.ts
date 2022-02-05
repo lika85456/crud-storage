@@ -1,4 +1,4 @@
-import CRUD, { Identifiable } from "./CRUD";
+import Storage, { WithId } from "./Storage";
 
 /**
  * Used for caching slow storages, such as ApiStorage
@@ -13,23 +13,23 @@ import CRUD, { Identifiable } from "./CRUD";
  * // use precacheAll if you want to sync server data
  * const cachedApiStorage = new CacheStorageCRUD<any>(new ClientApiStorageCRUD<any>(...), cachedLocalStorage, true);
  */
-export class CacheStorageCRUD<T> implements CRUD<T>{
+export default class CacheStorage<T extends object> implements Storage<T>{
 
     // indicator for fully loaded cache
     protected cacheLoaded: boolean = false;
 
     constructor(
-        protected storage: CRUD<T>,
-        protected cache: CRUD<T>,
+        protected storage: Storage<T>,
+        protected cache: Storage<T>,
         protected precacheAll: boolean = false
     ) {
         if (precacheAll) {
-            storage.getAll().then(all => {
+            storage.where().then(all => {
                 all.forEach(async element => {
                     const id = element.id;
                     // @ts-ignore
                     delete element.id;
-                    await this.cache.update(id, element);
+                    await this.cache.set(id, element);
                 });
 
                 this.cacheLoaded = true;
@@ -37,68 +37,66 @@ export class CacheStorageCRUD<T> implements CRUD<T>{
         }
     }
 
-    async create(object: T): Promise<string> {
-        const id = await this.storage.create(object);
+    public async set(id: string | undefined, object: T): Promise<string> {
+        id = await this.storage.set(id, object);
+        await this.cache.set(id, object);
 
-        await this.cache.update(id, object);
         return id;
     }
 
-    async read(id: string): Promise<Identifiable<T> | undefined> {
-        if (this.cacheLoaded || await this.cache.read(id)) {
-            return this.cache.read(id);
+    public async get(id: string): Promise<WithId<T> | undefined> {
+        // try to hit cache
+        if (this.cacheLoaded || await this.cache.get(id)) {
+            return this.cache.get(id);
         }
 
         // load the element
-        const element = await this.storage.read(id);
+        const element = await this.storage.get(id);
 
         // store it to cache
         if (!!element) {
             const copy = JSON.parse(JSON.stringify(element));
             delete copy.id;
-            this.cache.update(id, copy);
+            this.cache.set(id, copy);
         }
-
 
         return element;
     }
 
-    async update(id: string, object: T): Promise<void> {
-        await this.cache.update(id, object);
-        await this.storage.update(id, object);
+    public async where(query?: { key: string; value: string; }[]): Promise<WithId<T>[]> {
+        // hit cache
+        if (this.cacheLoaded) {
+            return this.cache.where(query);
+        }
+
+        const result = await this.storage.where(query);
+
+        // save all to cache
+        if (!query) {
+            result.forEach(async el => {
+                const copy = JSON.parse(JSON.stringify(el));
+                delete copy.id;
+                await this.cache.set(el.id, copy);
+            })
+
+            this.cacheLoaded = true;
+        }
+
+        return result;
     }
 
     async remove(id: string): Promise<void> {
-        await this.cache.remove(id);
         await this.storage.remove(id);
+        await this.cache.remove(id);
     }
 
     // TODO: cache list response
-    list(): Promise<string[]> {
+    getKeys(): Promise<string[]> {
         if (this.cacheLoaded) {
-            return this.cache.list();
+            return this.cache.getKeys();
         }
 
-        return this.storage.list();
-    }
-
-    async getAll(): Promise<Identifiable<T>[]> {
-        if (this.cacheLoaded) {
-            return this.cache.getAll();
-        }
-
-        const all = await this.storage.getAll();
-        all.forEach(async element => {
-            const copy = JSON.parse(JSON.stringify(element));
-            const id = copy.id;
-            // @ts-ignore
-            delete copy.id;
-            await this.cache.update(id, copy);
-        });
-
-        this.cacheLoaded = true;
-
-        return all;
+        return this.storage.getKeys();
     }
 
     // TODO: cache count

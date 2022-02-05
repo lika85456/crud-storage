@@ -4,36 +4,31 @@
 
 global.TextEncoder = require("util").TextEncoder;
 global.TextDecoder = require("util").TextDecoder;
-import bodyParser from "body-parser";
-import express from "express";
 import { MongoClient, ObjectId } from "mongodb";
 import MongoMemoryServer from "mongodb-memory-server-core";
 import { v4 } from "uuid";
-import { CacheStorageCRUD } from "../lib/CacheStorageCRUD";
-import { ClientApiStorageCRUD } from "../lib/ClientApiStorageCRUD";
-import CRUD from "../lib/CRUD";
-import IndexedCRUD from "../lib/IndexedCRUD";
-import LocalStorageCRUD from "../lib/LocalStorageCRUD";
-import MemoryCRUD from "../lib/MemoryCRUD";
-import MongoCRUD from "../lib/MongoCRUD";
-import { ServerApiStorage } from "../lib/ServerApiStorage";
+import CacheStorage from "../lib/CacheStorage";
+import Storage from "../lib/Storage";
+import IndexedStorage from "../lib/IndexedStorage";
+import LocalStorage from "../lib/LocalStorage";
+import MemoryStorage from "../lib/MemoryStorage";
+import MongoStorage from "../packages/MongoStorage/MongoStorage";
 require("fake-indexeddb/auto");
 
-let expressPort = 3001;
 
 describe.each([
     // MEMORY
-    [() => new MemoryCRUD<any>(), "MemoryCRUD"],
+    [() => new MemoryStorage<any>(), "MemoryCRUD"],
     // CACHE
-    [() => new CacheStorageCRUD<any>(new MemoryCRUD<any>(), new MemoryCRUD<any>(), false), "CacheStorageCRUD"],
+    [() => new CacheStorage<any>(new MemoryStorage<any>(), new MemoryStorage<any>(), false), "CacheStorageCRUD"],
     // LOCAL STORAGE
     [() => {
         localStorage.clear();
         jest.clearAllMocks();
-        return new LocalStorageCRUD<any>(Math.random() + "-test")
+        return new LocalStorage<any>(Math.random() + "-test")
     }, "LocalStorageCRUD"],
     // INDEXED DB
-    [() => new IndexedCRUD<any>("test-collection" + v4()), "IndexedStorageCRUD"],
+    [() => new IndexedStorage<any>("test-collection" + v4()), "IndexedStorageCRUD"],
     // MONGO DB
     [async () => {
         const mongod = await MongoMemoryServer.create();
@@ -45,102 +40,68 @@ describe.each([
             await client.close();
             await mongod.stop();
         }, 5000);
-        return new MongoCRUD<any>(db, "test-collection");
-    }, "MongoCRUD"],
-    // EXPRESS API
-    [async () => {
-        return new Promise(async (resolve) => {
-            const app = express();
-
-            app.use(bodyParser.json());
-
-            const serverStorage = new ServerApiStorage({
-                documentsLimit: 10,
-                maximumDocumentSize: 100
-            });
-
-            const memoryStorage = new MemoryCRUD<any>();
-
-            // @ts-ignore
-            app.post("/storage/:action", async (req: Request, res: Response) => {
-                // @ts-ignore
-                const response = await serverStorage.request(req.params.action as any, req.body, memoryStorage);
-                // @ts-ignore
-                res.json(response);
-            });
-
-            const port = expressPort++;
-
-            const CRUD = new ClientApiStorageCRUD<any>(`http://localhost:${port}/storage`, console);
-
-            let server = app.listen(port, () => {
-                console.log("Server started!");
-                setTimeout(() => server.close(), 5000);
-                resolve(CRUD);
-            });
-
-        });
-    }, "Express API"]
+        return new MongoStorage<any>(db, "test-collection");
+    }, "MongoCRUD"]
     // @ts-ignore
-])(`Generic CRUD test: $1`, (generateCrud: () => Promise<CRUD<object>> | CRUD<object>, name) => {
-    it('should set & get', async () => {
-        const CRUD = await generateCrud();
+])(`Generic Storage test: $1`, (generateStorage: () => Promise<Storage<object>> | Storage<object>, name) => {
+    it(`should set & get: ${name}`, async () => {
+        const Storage = await generateStorage();
 
-        // object
-        const id = await CRUD.create({ x: "100" });
-        const result = await CRUD.read(id);
-        expect(result).toStrictEqual({ id, x: "100" });
+        const objectToStore = {
+            x: 69
+        };
+
+        const id = await Storage.set(undefined, objectToStore);
+        console.dir({ id, objectToStore });
+        const result = await Storage.get(id);
+        console.dir({ id, objectToStore });
+        expect(result).toStrictEqual({ ...objectToStore, id });
+        objectToStore.x = 420;
+        expect(result).not.toStrictEqual({ ...objectToStore, id });
     });
 
-    it("should read undefined", async () => {
-        const CRUD = await generateCrud();
-        const result = await CRUD.read("");
-        expect(result).toBeUndefined();
+    it(`should read undefined: ${name}`, async () => {
+        const Storage = await generateStorage();
+        expect(await Storage.get("")).toBeUndefined();
+        expect(await Storage.get("eqoiweoguweoguewogu")).toBeUndefined();
+        expect(await Storage.get("3H1HF1H3F1IHG40TH19H81HT38FH1%E9H01E8HT1048H0138HG0183HF0813HF")).toBeUndefined();
     });
 
-    it('should create, update & get', async () => {
-        const CRUD = await generateCrud();
-        const id = await CRUD.create({ x: "100" });
-        await CRUD.update(id, { x: "200" });
-        const result = await CRUD.read(id);
+    it(`should create, update & get: ${name}`, async () => {
+        const Storage = await generateStorage();
+        const id = await Storage.set(undefined, { x: "100" });
+        await Storage.set(id, { x: "200" });
+        const result = await Storage.get(id);
         expect(result).toStrictEqual({ id, x: "200" });
     });
 
-    it('should update non existing document to create it', async () => {
-        const CRUD = await generateCrud();
-        const id = new ObjectId().toString();
-        await CRUD.update(id, { x: "200" });
-        const result = await CRUD.read(id);
-        expect(result).toStrictEqual({ id, x: "200" });
-    });
-
-    it('should set, get & remove and get undefined', async () => {
-        const CRUD = await generateCrud();
-        const id = await CRUD.create({ x: "100" });
-        let result = await CRUD.read(id);
+    it(`should set, get & remove and get undefined: ${name}`, async () => {
+        const Storage = await generateStorage();
+        const id = await Storage.set(undefined, { x: "100" });
+        let result = await Storage.get(id);
         expect(result).toStrictEqual({ id, x: "100" });
-        await CRUD.remove(result!.id);
-        result = await CRUD.read(id);
+        await Storage.remove(result!.id);
+        result = await Storage.get(id);
         expect(result).toBeUndefined();
     });
 
-    it('should get all', async () => {
-        const CRUD = await generateCrud();
+    it(`should get all: ${name}`, async () => {
+        const Storage = await generateStorage();
         let keys = [];
-        keys.push(await CRUD.create({ x: "x1" }));
-        keys.push(await CRUD.create({ x: "x2" }));
-        keys.push(await CRUD.create({ x: "x3" }));
-        let all = await CRUD.getAll();
+        keys.push(await Storage.set(undefined, { x: "x1" }));
+        keys.push(await Storage.set(undefined, { x: "x2" }));
+        keys.push(await Storage.set(undefined, { x: "x3" }));
+        let all = await Storage.where();
         expect(all).toStrictEqual([
             { id: keys[0], x: "x1" },
             { id: keys[1], x: "x2" },
             { id: keys[2], x: "x3" },
         ]);
 
-        expect(keys).toStrictEqual(await CRUD.list());
+        expect(keys).toStrictEqual(await Storage.getKeys());
 
-        await CRUD.remove(keys[0]);
-        all = await CRUD.getAll();
+        await Storage.remove(keys[0]);
+        all = await Storage.where();
         expect(all).toStrictEqual([
             { id: keys[1], x: "x2" },
             { id: keys[2], x: "x3" },
@@ -148,9 +109,9 @@ describe.each([
     });
 
     it('should return 0 count and empty array of getAll when empty' + ": " + name, async () => {
-        const CRUD = await generateCrud();
-        expect(await CRUD.count()).toBe(0);
-        expect((await CRUD.getAll()).length).toBe(0);
+        const Storage = await generateStorage();
+        expect(await Storage.count()).toBe(0);
+        expect((await Storage.where()).length).toBe(0);
     });
 
 });

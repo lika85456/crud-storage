@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Set of storages implementing simple CRUD interface. Contains storage for both the client and the server.",
   "main": "index.ts",
+  "type": "module",
   "directories": {
     "lib": "lib"
   },
@@ -13,6 +14,9 @@
     "type": "git",
     "url": "git+https://github.com/lika85456/crud-storage.git"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "keywords": [
     "MongoDB",
     "Typescript",
@@ -24,9 +28,8 @@
     "url": "https://github.com/lika85456/crud-storage/issues"
   },
   "homepage": "https://github.com/lika85456/crud-storage#readme",
-  "dependencies": {
+  "peerDependencies": {
     "idb-keyval": "^6.0.3",
-    "mongodb": "^4.2.2",
     "node-fetch": "^2.6.6",
     "uuid": "^8.3.2"
   },
