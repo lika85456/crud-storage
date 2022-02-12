@@ -1,9 +1,8 @@
 import {
-    Collection, Db, ObjectId, OptionalId
+    Collection, Db, ObjectId, OptionalUnlessRequiredId
 } from 'mongodb';
 import crypto from "crypto";
-import Storage, { WithId } from '../../lib/Storage';
-import { v4 } from 'uuid';
+import Storage, { WithId } from '../core/Storage';
 
 export default class MongoStorage<T extends object> implements Storage<T> {
     protected collection: Collection<T>;
@@ -36,13 +35,13 @@ export default class MongoStorage<T extends object> implements Storage<T> {
 
         // create new
         if (!id) {
-            return (await this.collection.insertOne(object as OptionalId<T>)).insertedId.toString();
+            return (await this.collection.insertOne(object as OptionalUnlessRequiredId<T>)).insertedId.toString();
         }
 
         // update
         const objectId = MongoStorage.getObjectId(id);
 
-        await this.collection.updateOne({ _id: objectId }, { $set: object }, { upsert: true });
+        await this.collection.updateOne({ _id: objectId } as any, { $set: object }, { upsert: true });
 
         return id;
     }
@@ -54,7 +53,7 @@ export default class MongoStorage<T extends object> implements Storage<T> {
             return undefined;
         }
 
-        let queryResult = await this.collection.findOne({ _id: objectId });
+        let queryResult = await this.collection.findOne({ _id: objectId } as any) as any;
         if (!queryResult) {
             return undefined;
         }

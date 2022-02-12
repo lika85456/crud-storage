@@ -1,14 +1,13 @@
-import Storage, { WithId } from "./Storage";
+import Storage, { WithId } from "../core/Storage";
 import { v4 } from "uuid";
 import { get, set, update, del, getMany } from "idb-keyval";
 
-export default class IndexedStorage<T extends object> implements Storage<T>{
-
+export default class IndexedStorage<T extends object> implements Storage<T> {
     static KEYS_PREFIX = "indexed-keys";
     protected keys: Promise<string[]> = Promise.resolve([]);
 
     constructor(protected prefix: string) {
-        this.keys = get(this.getKeysId()).then(e => !!e ? JSON.parse(e) : []);
+        this.keys = get(this.getKeysId()).then(e => (!!e ? JSON.parse(e) : []));
     }
 
     public async set(id: string | undefined, object: T): Promise<string> {
@@ -37,20 +36,22 @@ export default class IndexedStorage<T extends object> implements Storage<T>{
 
         return {
             ...JSON.parse(result),
-            id
+            id,
         };
     }
 
-    public async where(query?: { key: string; value: string; }[]): Promise<WithId<T>[]> {
+    public async where(query?: { key: string; value: string }[]): Promise<WithId<T>[]> {
         const keys = (await this.keys).map(x => this.prefix + x);
-        const all = (await getMany(keys)).map((x, i) => ({ ...JSON.parse(x), id: keys[i].substring(this.prefix.length) }));
+        const all = (await getMany(keys)).map((x, i) => ({
+            ...JSON.parse(x),
+            id: keys[i].substring(this.prefix.length),
+        }));
 
         if (!query) {
             return all;
         }
 
-        return all
-            .filter(x => query.every(queryEl => x[queryEl.key] === queryEl.value));
+        return all.filter(x => query.every(queryEl => x[queryEl.key] === queryEl.value));
     }
 
     async remove(id: string): Promise<void> {
@@ -67,7 +68,7 @@ export default class IndexedStorage<T extends object> implements Storage<T>{
     }
 
     protected async addKey(id: string) {
-        let keys = await this.keys;
+        const keys = await this.keys;
         keys.push(id);
         set(this.getKeysId(), JSON.stringify(keys));
     }

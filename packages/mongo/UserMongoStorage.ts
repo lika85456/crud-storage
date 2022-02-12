@@ -1,6 +1,6 @@
 import { Db } from "mongodb";
-import MongoCRUD from "./MongoStorage";
-import { WithId } from "../../lib/Storage";
+import { WithId } from "../../src/Storage";
+import MongoStorage from "./MongoStorage";
 
 type StorageAction = "set" | "get" | "remove" | "getKeys" | "where" | "count"
 export type StorageActionMiddleware = (action: StorageAction, data?: object) => boolean;
@@ -12,7 +12,7 @@ type UserMongoStorageOptions = {
     maxDocumentsCount: number;
 }
 
-export class UserMongoStorage<T extends object & { userId: string }> extends MongoCRUD<T> {
+export class UserMongoStorage<T extends object & { userId: string }> extends MongoStorage<T> {
 
     protected options: UserMongoStorageOptions;
 

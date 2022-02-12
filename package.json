@@ -1,15 +1,20 @@
 {
   "name": "crud-storage",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Set of storages implementing simple CRUD interface. Contains storage for both the client and the server.",
-  "main": "index.ts",
+  "main": "./packages/core/dist/Storage.js",
   "type": "module",
-  "directories": {
-    "lib": "lib"
-  },
   "scripts": {
-    "test": "jest ./test"
+    "test": "jest ./test",
+    "build": "tsc",
+    "prepare": "npm run build -workspaces",
+    "prepublishOnly": "npm run test",
+    "format": "prettier --write \"src/**/*.ts\" \"packages/**/*.ts\"",
+    "lint": "tslint -p tsconfig.json"
   },
+  "files": [
+    "./dist/**/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lika85456/crud-storage.git"
@@ -18,8 +23,10 @@
     "packages/*"
   ],
   "exports": {
-    ".": "./index.ts",
-    "./MongoStorage": "./packages/MongoStorage/MongoStorage.ts"
+    ".": null,
+    "./core": "./packages/core/dist/index.js",
+    "./mongo": "./packages/mongo/dist/index.js",
+    "./client": "./packages/client/dist/index.js"
   },
   "keywords": [
     "MongoDB",
@@ -54,7 +61,10 @@
     "jest-localstorage-mock": "^2.4.18",
     "jsdom": "^19.0.0",
     "mongodb-memory-server": "^8.1.0",
+    "prettier": "^2.5.1",
     "ts-jest": "^27.1.3",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^4.5.4"
   },
   "jest": {

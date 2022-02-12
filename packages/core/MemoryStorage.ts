@@ -1,7 +1,7 @@
 import CRUD, { WithId } from "./Storage";
 import { v4 } from "uuid";
 
-export default class MemoryCRUD<T extends object> implements CRUD<T>{
+export default class MemoryCRUD<T extends object> implements CRUD<T> {
     protected storage: { [id: string]: T } = {};
 
     public async set(id: string | undefined, object: T): Promise<string> {
@@ -11,12 +11,12 @@ export default class MemoryCRUD<T extends object> implements CRUD<T>{
     }
 
     public async get(id: string): Promise<WithId<T> | undefined> {
+        // @ts-ignore
         return !!this.storage[id]
-            ?
-            {
-                ...this.storage[id],
-                id
-            }
+            ? {
+                  ...this.storage[id],
+                  id,
+              }
             : undefined;
     }
 
@@ -24,14 +24,16 @@ export default class MemoryCRUD<T extends object> implements CRUD<T>{
         return Object.keys(this.storage);
     }
 
-    public async where(query?: { key: string; value: string; }[]): Promise<WithId<T>[]> {
+    public async where(query?: { key: string; value: string }[]): Promise<WithId<T>[]> {
         if (!query) {
             return Object.entries(this.storage).map(x => ({ id: x[0], ...x[1] }));
         }
-        return Object.entries(this.storage)
-            // @ts-ignore
-            .filter(entry => query.every(queryEntry => entry[1][queryEntry.key] === queryEntry.value))
-            .map(x => ({ id: x[0], ...x[1] }));
+        return (
+            Object.entries(this.storage)
+                // @ts-ignore
+                .filter(entry => query.every(queryEntry => entry[1][queryEntry.key] === queryEntry.value))
+                .map(x => ({ id: x[0], ...x[1] }))
+        );
     }
 
     async remove(id: string): Promise<void> {
@@ -41,5 +43,4 @@ export default class MemoryCRUD<T extends object> implements CRUD<T>{
     async count(): Promise<number> {
         return Object.keys(this.storage).length;
     }
-
 }

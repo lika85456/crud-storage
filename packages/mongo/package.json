@@ -1,0 +1,40 @@
+{
+  "name": "@crud-storage/mongo",
+  "version": "1.0.1",
+  "description": "",
+  "main": "./dist/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest ./test",
+    "build": "tsc --project ../../tsconfig.json",
+    "prepublishOnly": "npm run test",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "./dist/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lika85456/crud-storage.git"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "author": "lika85456",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lika85456/crud-storage/issues"
+  },
+  "homepage": "https://github.com/lika85456/crud-storage#readme",
+  "jest": {
+    "resetMocks": false,
+    "setupFiles": [
+      "jest-localstorage-mock",
+      "fake-indexeddb/auto"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest",
+      "^.+\\.(js)$": "babel-jest"
+    }
+  }
+}

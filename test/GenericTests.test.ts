@@ -7,12 +7,12 @@ global.TextDecoder = require("util").TextDecoder;
 import { MongoClient, ObjectId } from "mongodb";
 import MongoMemoryServer from "mongodb-memory-server-core";
 import { v4 } from "uuid";
-import CacheStorage from "../lib/CacheStorage";
-import Storage from "../lib/Storage";
-import IndexedStorage from "../lib/IndexedStorage";
-import LocalStorage from "../lib/LocalStorage";
-import MemoryStorage from "../lib/MemoryStorage";
-import MongoStorage from "../packages/MongoStorage/MongoStorage";
+import CacheStorage from "../src/CacheStorage";
+import Storage from "../src/Storage";
+import IndexedStorage from "../src/IndexedStorage";
+import LocalStorage from "../src/LocalStorage";
+import MemoryStorage from "../src/MemoryStorage";
+import MongoStorage from "../packages/MongoStorage";
 require("fake-indexeddb/auto");
 
 

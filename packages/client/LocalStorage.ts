@@ -1,8 +1,7 @@
-import Storage, { WithId } from "./Storage";
+import Storage, { WithId } from "../core/Storage";
 import { v4 } from "uuid";
 
-export default class LocalStorage<T extends object> implements Storage<T>{
-
+export default class LocalStorage<T extends object> implements Storage<T> {
     static KEYS_PREFIX = "keys/";
     protected keys: string[] = [];
 
@@ -38,7 +37,7 @@ export default class LocalStorage<T extends object> implements Storage<T>{
 
         return {
             ...JSON.parse(result),
-            id
+            id,
         };
     }
 
@@ -46,15 +45,11 @@ export default class LocalStorage<T extends object> implements Storage<T>{
         return this.keys;
     }
 
-    public async where(query?: { key: string; value: string; }[]): Promise<WithId<T>[]> {
-        const all = this.keys.map(key => ([
-            key,
-            JSON.parse(localStorage.getItem(this.prefix + key) || "null"),
-        ]));
+    public async where(query?: { key: string; value: string }[]): Promise<WithId<T>[]> {
+        const all = this.keys.map(key => [key, JSON.parse(localStorage.getItem(this.prefix + key) || "null")]);
 
         if (!query) {
-            return all
-                .map(x => ({ id: x[0], ...x[1] }));
+            return all.map(x => ({ id: x[0], ...x[1] }));
         }
 
         return all
