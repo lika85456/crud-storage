@@ -6,3 +6,8 @@ tasks:
 #ports:
 #  - port: 3000
 #    onOpen: open-preview
+vscode:
+  extensions:
+    - "ms-vscode.vscode-typescript-next"
+    - "orta.vscode-jest"
+    - "kavod-io.vscode-jest-test-adapter"
