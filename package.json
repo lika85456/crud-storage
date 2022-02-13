@@ -1,6 +1,6 @@
 {
   "name": "crud-storage",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Set of storages implementing simple CRUD interface. Contains storage for both the client and the server.",
   "type": "module",
   "scripts": {
