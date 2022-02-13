@@ -1,4 +1,4 @@
-import Storage, { WithId } from "../core/Storage";
+import Storage, { WithId } from "@crud-storage/core";
 import { v4 } from "uuid";
 
 export default class LocalStorage<T extends object> implements Storage<T> {

@@ -23,8 +23,8 @@
   ],
   "exports": {
     ".": "./packages/core/dist/index.js",
-    "./mongo": "./packages/mongo/dist/mongo/index.js",
-    "./client": "./packages/client/dist/client/index.js"
+    "./mongo": "./packages/mongo/dist/index.js",
+    "./client": "./packages/client/dist/index.js"
   },
   "keywords": [
     "MongoDB",

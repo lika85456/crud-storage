@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "jest ./test",
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test",
     "format": "prettier --write \"src/**/*.ts\" \"packages/**/*.ts\"",
@@ -20,7 +20,7 @@
     "url": "git+https://github.com/lika85456/crud-storage.git"
   },
   "exports": {
-    ".": "./distPclient/index.js"
+    ".": "./dist/index.js"
   },
   "author": "lika85456",
   "license": "ISC",
@@ -31,7 +31,8 @@
   "dependencies": {
     "idb-keyval": "^6.0.3",
     "node-fetch": "^2.6.6",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "@crud-storage/core": "../core"
   },
   "jest": {
     "resetMocks": false,

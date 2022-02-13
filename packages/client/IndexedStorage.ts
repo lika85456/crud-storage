@@ -1,4 +1,4 @@
-import Storage, { WithId } from "../core/Storage";
+import Storage, { WithId } from "@crud-storage/core";
 import { v4 } from "uuid";
 import { get, set, update, del, getMany } from "idb-keyval";
 

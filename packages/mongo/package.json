@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "jest ./test",
-    "build": "tsc",
+    "build": "rm -rf ./dist && tsc",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test",
     "format": "prettier --write \"src/**/*.ts\" \"packages/**/*.ts\"",
@@ -29,7 +29,8 @@
   },
   "homepage": "https://github.com/lika85456/crud-storage#readme",
   "dependencies": {
-    "mongodb": "^4.3.1"
+    "mongodb": "^4.3.1",
+    "@crud-storage/core": "../core"
   },
   "jest": {
     "resetMocks": false,

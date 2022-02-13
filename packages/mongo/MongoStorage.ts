@@ -2,7 +2,7 @@ import {
     Collection, Db, ObjectId, OptionalUnlessRequiredId
 } from 'mongodb';
 import crypto from "crypto";
-import Storage, { WithId } from '../core/Storage';
+import Storage, { WithId } from '@crud-storage/core';
 
 export default class MongoStorage<T extends object> implements Storage<T> {
     protected collection: Collection<T>;

@@ -1,5 +1,5 @@
 import { Db } from "mongodb";
-import { WithId } from "../../src/Storage";
+import { WithId } from "@crud-storage/core";
 import MongoStorage from "./MongoStorage";
 
 type StorageAction = "set" | "get" | "remove" | "getKeys" | "where" | "count"
