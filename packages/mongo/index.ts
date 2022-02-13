@@ -1,2 +1,2 @@
-export default "./MongoStorage";
+export { default } from "./MongoStorage";
 export { UserMongoStorage } from "./UserMongoStorage";
