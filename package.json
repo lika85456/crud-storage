@@ -1,19 +1,16 @@
 {
   "name": "crud-storage",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Set of storages implementing simple CRUD interface. Contains storage for both the client and the server.",
   "type": "module",
   "scripts": {
     "test": "echo \"Hello there\"",
     "build": "npm run build -ws",
-    "prepare": "npm run build -ws",
     "format": "npm run format -ws",
     "lint": "npm run lint -ws"
   },
   "files": [
-    "./packages/core/dist/**/*",
-    "./packages/mongo/dist/**/*",
-    "./packages/client/dist/**/*"
+    "packages/**/dist/**/*"
   ],
   "repository": {
     "type": "git",
