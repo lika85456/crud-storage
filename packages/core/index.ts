@@ -1,5 +1,8 @@
 export type WithId<T> = T & { id: string };
 
+export { default as CacheStorage } from "./CacheStorage";
+export { default as MemoryStorage } from "./MemoryStorage";
+
 export default interface Storage<T extends object> {
     /**
      *

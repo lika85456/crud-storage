@@ -1,8 +1,8 @@
 {
-  "name": "@crud-storage/mongo",
+  "name": "mongo",
   "version": "1.0.1",
   "description": "",
-  "main": "./dist/mongo/index.js",
+  "main": "./dist/index.js",
   "type": "module",
   "scripts": {
     "test": "jest ./test",
@@ -28,7 +28,9 @@
     "url": "https://github.com/lika85456/crud-storage/issues"
   },
   "homepage": "https://github.com/lika85456/crud-storage#readme",
-  "peerDependencies": {},
+  "dependencies": {
+    "mongodb": "^4.3.1"
+  },
   "jest": {
     "resetMocks": false,
     "setupFiles": [

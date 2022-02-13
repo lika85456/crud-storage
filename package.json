@@ -2,7 +2,6 @@
   "name": "crud-storage",
   "version": "1.0.2",
   "description": "Set of storages implementing simple CRUD interface. Contains storage for both the client and the server.",
-  "main": "./packages/core/dist/Storage.js",
   "type": "module",
   "scripts": {
     "test": "npm run test -ws",
@@ -23,8 +22,7 @@
     "packages/*"
   ],
   "exports": {
-    ".": null,
-    "./core": "./packages/core/dist/index.js",
+    ".": "./packages/core/dist/index.js",
     "./mongo": "./packages/mongo/dist/mongo/index.js",
     "./client": "./packages/client/dist/client/index.js"
   },

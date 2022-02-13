@@ -87,7 +87,7 @@ export default class MongoStorage<T extends object> implements Storage<T> {
             mongoQuery[queryProp.key] = queryProp.value;
         })
 
-        const docs = await (await this.collection.find(mongoQuery).toArray()).map(doc => {
+        const docs = await (await this.collection.find(mongoQuery).toArray()).map((doc: any) => {
             // @ts-ignore
             doc.id = doc._id.toString();
             // @ts-ignore
