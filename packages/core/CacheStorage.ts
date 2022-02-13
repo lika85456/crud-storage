@@ -1,4 +1,4 @@
-import Storage, { WithId } from "./Storage";
+import Storage, { WithId } from ".";
 
 /**
  * Used for caching slow storages, such as ApiStorage

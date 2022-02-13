@@ -1,8 +1,8 @@
 {
-  "name": "@crud-storage/mongo",
+  "name": "@crud-storage/client",
   "version": "1.0.1",
   "description": "",
-  "main": "./dist/mongo/index.js",
+  "main": "./dist/client/index.js",
   "type": "module",
   "scripts": {
     "test": "jest ./test",
@@ -20,7 +20,7 @@
     "url": "git+https://github.com/lika85456/crud-storage.git"
   },
   "exports": {
-    ".": "./dist/mongo/index.js"
+    ".": "./distPclient/index.js"
   },
   "author": "lika85456",
   "license": "ISC",
@@ -28,7 +28,11 @@
     "url": "https://github.com/lika85456/crud-storage/issues"
   },
   "homepage": "https://github.com/lika85456/crud-storage#readme",
-  "peerDependencies": {},
+  "peerDependencies": {
+    "idb-keyval": "^6.0.3",
+    "node-fetch": "^2.6.6",
+    "uuid": "^8.3.2"
+  },
   "jest": {
     "resetMocks": false,
     "setupFiles": [

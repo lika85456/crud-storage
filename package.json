@@ -5,15 +5,15 @@
   "main": "./packages/core/dist/Storage.js",
   "type": "module",
   "scripts": {
-    "test": "jest ./test",
-    "build": "tsc",
-    "prepare": "npm run build -workspaces",
-    "prepublishOnly": "npm run test",
-    "format": "prettier --write \"src/**/*.ts\" \"packages/**/*.ts\"",
-    "lint": "tslint -p tsconfig.json"
+    "test": "npm run test -ws",
+    "build": "npm run build -ws",
+    "prepare": "npm run build -ws",
+    "prepublishOnly": "npm run test -ws",
+    "format": "npm run format -ws",
+    "lint": "npm run lint -ws"
   },
   "files": [
-    "./dist/**/*"
+    "./packages/**/dist/**/*"
   ],
   "repository": {
     "type": "git",
@@ -25,8 +25,8 @@
   "exports": {
     ".": null,
     "./core": "./packages/core/dist/index.js",
-    "./mongo": "./packages/mongo/dist/index.js",
-    "./client": "./packages/client/dist/index.js"
+    "./mongo": "./packages/mongo/dist/mongo/index.js",
+    "./client": "./packages/client/dist/client/index.js"
   },
   "keywords": [
     "MongoDB",
@@ -39,11 +39,6 @@
     "url": "https://github.com/lika85456/crud-storage/issues"
   },
   "homepage": "https://github.com/lika85456/crud-storage#readme",
-  "peerDependencies": {
-    "idb-keyval": "^6.0.3",
-    "node-fetch": "^2.6.6",
-    "uuid": "^8.3.2"
-  },
   "devDependencies": {
     "@babel/core": "^7.16.7",
     "@babel/preset-env": "^7.16.7",

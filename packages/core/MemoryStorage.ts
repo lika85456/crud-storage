@@ -1,4 +1,4 @@
-import CRUD, { WithId } from "./Storage";
+import CRUD, { WithId } from ".";
 import { v4 } from "uuid";
 
 export default class MemoryCRUD<T extends object> implements CRUD<T> {
@@ -14,9 +14,9 @@ export default class MemoryCRUD<T extends object> implements CRUD<T> {
         // @ts-ignore
         return !!this.storage[id]
             ? {
-                  ...this.storage[id],
-                  id,
-              }
+                ...this.storage[id],
+                id,
+            }
             : undefined;
     }
 
