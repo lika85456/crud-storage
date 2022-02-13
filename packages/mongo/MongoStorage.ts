@@ -47,18 +47,18 @@ export default class MongoStorage<T extends object> implements Storage<T> {
     }
 
     public async get(id: string): Promise<WithId<T> | undefined> {
-        let objectId = MongoStorage.getObjectId(id);
+        const objectId = MongoStorage.getObjectId(id);
 
         if (!id) {
             return undefined;
         }
 
-        let queryResult = await this.collection.findOne({ _id: objectId } as any) as any;
+        const queryResult = await this.collection.findOne({ _id: objectId } as any) as any;
         if (!queryResult) {
             return undefined;
         }
 
-        let returnValue: any = {
+        const returnValue: any = {
             ...queryResult,
             id: queryResult._id.toString()
         };

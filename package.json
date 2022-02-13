@@ -4,15 +4,16 @@
   "description": "Set of storages implementing simple CRUD interface. Contains storage for both the client and the server.",
   "type": "module",
   "scripts": {
-    "test": "npm run test -ws",
+    "test": "echo \"Hello there\"",
     "build": "npm run build -ws",
     "prepare": "npm run build -ws",
-    "prepublishOnly": "npm run test -ws",
     "format": "npm run format -ws",
     "lint": "npm run lint -ws"
   },
   "files": [
-    "./packages/**/dist/**/*"
+    "./packages/core/dist/**/*",
+    "./packages/mongo/dist/**/*",
+    "./packages/client/dist/**/*"
   ],
   "repository": {
     "type": "git",
